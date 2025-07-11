@@ -7,6 +7,7 @@ import io
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
+from reportlab.lib.styles import getSampleStyleSheet
 from PIL import Image
 
 st.set_page_config(layout="wide")
@@ -100,16 +101,18 @@ else:
                     image = Image.open(buf)
                     image_path = f"{column}.png"
                     image.save(image_path)
+
+                    # PDF Layout
+                    diagram_y = 10 * cm
+                    image_height = 7.9 * cm
+                    c.setFont("Helvetica-Bold", 10)
                     c.drawString(2 * cm, 27 * cm, f"Analyse zur ISIN: {user_isin}")
+                    c.setFont("Helvetica", 9)
                     c.drawString(2 * cm, 26.5 * cm, f"{column}:")
-                    diagram_y = 12 * cm
-                    c.drawImage(image_path, 2 * cm, 15 * cm, width=15.9 * cm, height=7.9 * cm)
+                    c.drawImage(image_path, 2 * cm, diagram_y, width=15.9 * cm, height=image_height)
 
                     # Grauer Kasten rechts neben dem Diagramm (PDF)
                     info_x = 15.9 * cm
-                    info_y = 23.2 * cm
-                    c.setFillColorRGB(0.97, 0.97, 0.97)
-                    c.setFont("Helvetica", 8)
                     text_lines = [
                         f"Wert zur ISIN: {user_value}",
                         f"Anzahl ISINs Peergroup: {num_values}",
@@ -118,8 +121,11 @@ else:
                         f"{percentile:.1f}% der Werte sind kleiner"
                     ]
                     box_height = len(text_lines) * 0.55 * cm + 0.5 * cm
+                    info_y = diagram_y + image_height - box_height
+                    c.setFillColorRGB(0.97, 0.97, 0.97)
                     c.rect(info_x, info_y, 5.5 * cm, box_height, fill=1, stroke=0)
                     c.setFillColorRGB(0, 0, 0)
+                    c.setFont("Helvetica", 8)
                     line_y = info_y + box_height - 0.5 * cm
                     for line in text_lines:
                         c.drawString(info_x + 0.3 * cm, line_y, line)
