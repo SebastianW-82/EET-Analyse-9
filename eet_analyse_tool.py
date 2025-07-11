@@ -102,6 +102,7 @@ else:
                     image.save(image_path)
                     c.drawString(2 * cm, 27 * cm, f"Analyse zur ISIN: {user_isin}")
                     c.drawString(2 * cm, 26.5 * cm, f"{column}:")
+                    diagram_y = 12 * cm
                     c.drawImage(image_path, 2 * cm, 15 * cm, width=15.9 * cm, height=7.9 * cm)
 
                     # Grauer Kasten rechts neben dem Diagramm (PDF)
